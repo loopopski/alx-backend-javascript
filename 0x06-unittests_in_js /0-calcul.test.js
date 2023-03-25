@@ -1,21 +1,30 @@
-const assert = require('assert');
-const {it, describe} = require('mocha');
-const calculateNumber = require('./0-calcul');
+const assert = require("assert");
+const calculateNumber = require("./0-calcul")
 
-describe('calculateNumber', () => {
-    it('checking if numbers round', () => {
-        assert.equal(calculateNumber(1, 3), 4);
-    });
-    it('checking if numbers round 2nd round', () => {
-        assert.equal(calculateNumber(1, 3.7), 5);
-    });
-    it('checking if numbers round 3nd round', () => {
-        assert.equal(calculateNumber(1.2, 3.7), 5);
-    });
-    it('checking if numbers round 4nd round', () => {
-        assert.equal(calculateNumber(1.5, 3.7), 6);
-    });
-    it('checking negative return', () => {
-        assert.equal(calculateNumber(-1.3, -3.7), -5);
-      });
+
+describe("calculateNumber", function() {
+  it("checks sum of rounded numbers", function() {
+    const test1 = calculateNumber(1, 3);
+    assert.equal(test1, 4);
+  });
+  it("checks sum of mixed numbers", function() {
+    const test1 = calculateNumber(1, 3.7);
+    assert.equal(test1, 5);
+  });
+  it("checks sum of float numbers", function() {
+    const test1 = calculateNumber(1.2, 3.7);
+    assert.equal(test1, 5);
+  });
+  it("checks sum of float numbers", function() {
+    const test1 = calculateNumber(1.5, 3.7);
+    assert.equal(test1, 6);
+  });
+  it("checks sum of mixed sign float numbers", function() {
+    const test1 = calculateNumber(-1.2, 3.7);
+    assert.equal(test1, 3);
+  });
+  it("checks sum of negative float numbers", function() {
+    const test1 = calculateNumber(-1.5, -3.7);
+    assert.equal(test1, -5);
+  });
 });
