@@ -1,29 +1,38 @@
-const fs = require('fs');
+import { readFile } from 'fs';
 
 function readDatabase(path) {
   return new Promise((resolve, reject) => {
-    if (!path) {
-      reject(new Error('Cannot load the database'));
-    }
-    fs.readFile(path, 'utf8', (err, data) => {
+    readFile(path, 'utf-8', (err, data) => {
       if (err) {
-        reject(new Error('Cannot load the database'));
+        reject(err);
       } else {
-        // split data into individual
-        const lines = data.split('\n');
-        const students = lines.slice(1, -1);
-        const obj = {};
+        const dataArray = data.toString().split('\n').map((e) => e.trim())
+          .map((e) => e.split(',').map((e) => e.trim()));
+        const dataKeys = dataArray.shift();
+        const result = [];
+        const dataSet = new Set();
+        const res = {};
 
-        students.forEach((student) => {
-          const data = student.split(',');
-          const field = data[data.length - 1];
-
-          if (!obj[field]) {
-            obj[field] = [];
+        for (let i = 0; i < dataArray.length; i += 1) {
+          const dataJson = {};
+          for (let j = 0; j < dataArray[i].length; j += 1) {
+            if (dataArray[i][j] !== '') {
+              dataJson[dataKeys[j]] = dataArray[i][j];
+              if (dataKeys[j] === 'field') {
+                dataSet.add(dataArray[i][j]);
+              }
+            }
           }
-          obj[field].push(data[0]);
+          result.push(dataJson);
+        }
+
+        const validResult = result.filter((item) => Object.keys(item).length !== 0);
+        dataSet.forEach((value) => {
+          const arr = validResult.filter((item) => item.field === value);
+          const firstNames = arr.map((item) => item.firstname);
+          res[value] = firstNames;
         });
-        resolve(obj);
+        resolve(res);
       }
     });
   });
