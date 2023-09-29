@@ -1,8 +1,7 @@
-// App controller
 class AppController {
-  static getHomepage(request, response) {
-    response.status = 200;
-    response.send('Hello Holberton School!');
+  // constructor() {}
+  static getHomepage(req, res) {
+    res.status(200).end('Hello Holberton School!');
   }
 }
 
