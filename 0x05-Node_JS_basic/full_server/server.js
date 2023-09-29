@@ -1,10 +1,13 @@
-import app from './routes/index';
+import express from 'express';
+import router from './routes/index';
 
-const HOSTNAME = '127.0.0.1';
-const PORT = 1245;
+const app = express();
+const port = 1245;
 
-app.listen(HOSTNAME, PORT, () => {
-  console.log(`Example app running at http://${HOSTNAME}:${PORT}/`);
-});
+app.use('/', router);
+app.use('/students', router);
+app.use('/students/:major', router);
+
+app.listen(port);
 
 export default app;
