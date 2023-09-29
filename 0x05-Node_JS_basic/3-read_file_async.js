@@ -1,38 +1,39 @@
+// const fs = require('fs/promises');
 const fs = require('fs');
 
-const countStudents = (path) => new Promise((resolve, reject) => {
-  fs.readFile(path, 'utf8', (err, data) => {
-    if (err) {
-      reject(new Error('Cannot load the database'));
-    } else {
-      const printOut = [];
-      const dataLines = data.split('\n'); // split each in to separate lines
-      let students = dataLines.filter((item) => item);
-      students = students.map((item) => item.split(','));
-      const printItem = `Number of students: ${students.length - 1}`;
-      console.log(printItem);
-      printOut.push(printItem);
+async function countStudents(path) {
+  try {
+    const data = await fs.promises.readFile(path, 'utf8');
+    const dataArray = data.toString().split('\n').map((e) => e.trim())
+      .map((e) => e.split(',').map((e) => e.trim()));
+    const dataKeys = dataArray.shift();
+    const result = [];
+    const dataSet = new Set();
 
-      const fields = {};
-      for (const student in students) {
-        if (student !== 0) {
-          if (!fields[students[student][3]]) {
-            fields[students[student][3]] = [];
+    for (let i = 0; i < dataArray.length; i += 1) {
+      const dataJson = {};
+      for (let j = 0; j < dataArray[i].length; j += 1) {
+        if (dataArray[i][j] !== '') {
+          dataJson[dataKeys[j]] = dataArray[i][j];
+          if (dataKeys[j] === 'field') {
+            dataSet.add(dataArray[i][j]);
           }
-          fields[students[student][3]].push(students[student][0]);
         }
       }
-      delete fields.field;
-      for (const key of Object.keys(fields)) {
-        const fieldLen = fields[key].length;
-        const stuName = fields[key].join(', ');
-        const printItem = `Number of students in ${key}: ${fieldLen}. List: ${stuName}`;
-        console.log(printItem);
-        printOut.push(printItem);
-      }
-      resolve(printOut);
+      result.push(dataJson);
     }
-  });
-});
+
+    const validResult = result.filter((item) => Object.keys(item).length !== 0);
+    console.log(`Number of students: ${validResult.length}`);
+    dataSet.forEach((value) => {
+      const arr = validResult.filter((item) => item.field === value);
+      const firstNames = arr.map((item) => item.firstname);
+      console.log(`Number of students in ${value}: ${arr.length}. List: ${firstNames.join(', ')}`);
+    });
+    return data;
+  } catch (err) {
+    throw new Error('Cannot load the database');
+  }
+}
 
 module.exports = countStudents;
